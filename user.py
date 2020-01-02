@@ -9,3 +9,7 @@ class User:
 
     def add_new_service(self, service):
         self.__services.append(service)
+
+    def show_services(self):
+        for service in self.__services:
+            print(f"| {service} |")
