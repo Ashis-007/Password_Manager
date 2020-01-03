@@ -1,4 +1,6 @@
 import sqlite3
+import secrets
+import string
 from user import User
 
 
@@ -59,7 +61,16 @@ def register():
 
 
 def generate_pass():
-    pass
+    special_char = "!@#$%&*?"
+    my_string = string.ascii_letters + string.digits + special_char
+    size = int(input("Enter the length of password you wish to keep: "))
+
+    while True:
+        password = ''.join(choice(my_string) for i in range(size))
+        if (any(c.islower() for c in password)
+                and any(c.isupper() for c in password)
+                and sum(c.isdigit() for c in password) >= 3):
+            break
 
 
 def list_services():
