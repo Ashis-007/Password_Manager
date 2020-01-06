@@ -1,7 +1,6 @@
 class User:
-    def __init__(self, username, password):
+    def __init__(self, username):
         self.__username = username
-        self.__password = password
         self.__services = []
 
     def get_usermame(self):
