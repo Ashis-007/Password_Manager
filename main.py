@@ -5,6 +5,7 @@ import string
 import base64
 import os
 import pickle
+import pyperclip
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
@@ -12,25 +13,20 @@ from cryptography.fernet import Fernet
 from user import User
 
 
-salt = b'\xc3?\xedU\xb9\xd8<8\xc6\xf5\xf0\xce\xb6W|\xaa'
-my_dict = {}
-
-
 def show_options():
     choice = input(
-        "(A)dd new password, (G)et password or (C)hange password, (L)ist all services, (S)ign out")
+        "(A)dd new password, (G)et password or (C)hange password, (L)ist all services, (Q)uit")
     if choice.lower() == "a":
-        pass
-    elif choice.lower() == "g":
         size = int(input("Enter the length of password you wish to keep: "))
         generate_pass(size)
-
+    elif choice.lower() == "g":
+        get_password()
     elif choice.lower() == "c":
         pass
     elif choice.lower() == "l":
         list_services()
-    elif choice.lower() == "s":
-        pass
+    elif choice.lower() == "q":
+        os.sys.exit()
     else:
         print("Wrong input!")
 
@@ -99,6 +95,32 @@ def register():
         register()
 
 
+def get_password():
+    service = input("Enter the service name: ")
+
+    # getting dict from file
+    file = open("List.pkl", "rb")
+    my_dict = pickle.load(file)
+    file.close()
+
+    password = my_dict[service]
+
+    # getting the key
+    file = open("key.key", "rb")
+    key = file.read()
+    file.close()
+
+    # decrypting the password
+    f = Fernet(key)
+    password = f.decrypt(password)
+    password = password.decode()
+
+    # copying password to clipboard
+    pyperclip.copy(password)
+
+    print("Your password has been copied to clipboard")
+
+
 # generate random password
 def generate_pass(size):
 
@@ -124,7 +146,7 @@ def generate_pass(size):
         generate_pass(size)
 
 
-# hashing the password
+# hashing the the master password
 def hash_pass(password):
     b_pass = str.encode(password)
     b_salt = salt
@@ -134,7 +156,12 @@ def hash_pass(password):
 
 
 def list_services():
-    cursor.execute("SELECT services from list")
+    file = open("List.pkl", "rb")
+    my_dict = pickle.load(file)
+    file.close()
+
+    for service in my_dict:
+        print(f"|   {service}   |")
 
 
 def add_new_password(password):
@@ -174,12 +201,16 @@ cursor = conn.cursor()
 #                   (password TEXT PRIMARY KEY NOT NULL,
 #                    services TEXT NOT NULL);""")
 
-print("==== Welcome to LastPass ====")
 
-choice = input("(C)reate an account, (L)ogin\n")
-if choice.lower() == "c":
-    register()
-elif choice.lower() == "l":
-    login()
-else:
-    print("Wrong input!")
+if __name__ == "__main__":
+    print("==== Welcome to LastPass ====")
+    salt = b'\xc3?\xedU\xb9\xd8<8\xc6\xf5\xf0\xce\xb6W|\xaa'
+    my_dict = {}
+
+    choice = input("(C)reate an account, (L)ogin\n")
+    if choice.lower() == "c":
+        register()
+    elif choice.lower() == "l":
+        login()
+    else:
+        print("Wrong input!")
