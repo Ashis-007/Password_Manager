@@ -10,12 +10,12 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.fernet import Fernet
-from user import User
+#from user import User
 
 
 def show_options():
     choice = input(
-        "(A)dd new password, (G)et password or (C)hange password, (L)ist all services, (Q)uit")
+        "(A)dd new password, (G)et password or (C)hange password, (L)ist all services, (Q)uit\n")
     if choice.lower() == "a":
         size = int(input("Enter the length of password you wish to keep: "))
         generate_pass(size)
@@ -34,7 +34,7 @@ def show_options():
 
 
 def login():
-    global user
+    #global user
     username = input("Enter username: ")
     password = input("Enter master password: ")
     hash_mp = hash_pass(password)
@@ -44,7 +44,7 @@ def login():
 
     if result:
         print(f"Welcome {username}")
-        user = User(username, password)
+        #user = User(username, password)
         show_options()
     else:
         print("Invalid credentials. Please try again.")
@@ -59,7 +59,7 @@ def register():
     global user
 
     if pass1 == pass2:
-        user = User(username)
+        #user = User(username)
 
         hash_mp = hash_pass(pass1)
         cursor.execute("INSERT INTO users VALUES (?,?);", (username, hash_mp))
@@ -68,16 +68,16 @@ def register():
         # generating key from master password
         master_pass = pass1.encode()
         kdf = PBKDF2HMAC(
-            algorithm=hashes.SHA3_256,
-            length=16,
+            algorithm=hashes.SHA512(),
+            length=32,
             salt=salt,
             iterations=100000,
-            backend=default_backend
+            backend=default_backend()
         )
         key = base64.urlsafe_b64encode(kdf.derive(master_pass))
 
         # storing the key in a file
-        file = open("key.key", "wb")
+        file = open("key.txt", "wb")
         file.write(key)
         file.close()
 
@@ -106,7 +106,7 @@ def get_password():
     password = my_dict[service]
 
     # getting the key
-    file = open("key.key", "rb")
+    file = open("key.txt", "rb")
     key = file.read()
     file.close()
 
@@ -140,7 +140,7 @@ def generate_pass(size):
     print(f"Here is your password: {password}")
 
     choice = input("Press Y to keep this / Press any key to get a new one: ")
-    if choice.lower == "y":
+    if choice.lower() == "y":
         add_new_password(password)
     else:
         generate_pass(size)
@@ -168,7 +168,7 @@ def add_new_password(password):
     service = input("Enter the name of the service: ")
 
     # getting the key from file
-    file = open("key.key", "rb")
+    file = open("key.txt", "rb")
     key = file.read()
     file.close
 
