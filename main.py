@@ -74,7 +74,7 @@ def register():
             iterations=100000,
             backend=default_backend()
         )
-        key = base64.urlsafe_b64encode(kdf.derive(master_pass))
+        key = base64.b64encode(kdf.derive(master_pass))
 
         # storing the key in a file
         file = open("key.txt", "wb")
@@ -178,8 +178,9 @@ def add_new_password(password):
     pass_encrypted = f.encrypt(password)
     my_dict[service] = pass_encrypted
 
+    # TODO:
     # removing the previous file
-    os.remove("C: \\Users\\ashis\\Desktop\\Password_Manager\\List.pkl")
+    # os.remove("C: \\Users\\ashis\\Desktop\\Password_Manager\\List.pkl")
 
     # creating a new file and
     # writing the dict into it
@@ -196,10 +197,6 @@ cursor = conn.cursor()
 #                   (username TEXT PRIMARY KEY NOT NULL ,
 #                   password TEXT NOT NULL) ;
 # """)
-
-# cursor.execute("""CREATE TABLE list
-#                   (password TEXT PRIMARY KEY NOT NULL,
-#                    services TEXT NOT NULL);""")
 
 
 if __name__ == "__main__":
