@@ -1,4 +1,4 @@
-# Password_Manager
+# Password Manager
  A simple password manager(CLI) to store and generate random passowrds. 
  All you need is to remember your master password and you are all set!
 ## Dependencies:
