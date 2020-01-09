@@ -161,7 +161,7 @@ def list_services():
     file.close()
 
     for service in my_dict:
-        print(f"|   {service}   |")
+        print(f"|{service}|")
 
 
 def add_new_password(password):
@@ -180,7 +180,10 @@ def add_new_password(password):
 
     # TODO:
     # removing the previous file
-    # os.remove("C: \\Users\\ashis\\Desktop\\Password_Manager\\List.pkl")
+    try:
+        os.remove("C:\\Users\\ashis\\Desktop\\Password_Manager\\List.pkl")
+    except:
+        print("File could not be found.")
 
     # creating a new file and
     # writing the dict into it
